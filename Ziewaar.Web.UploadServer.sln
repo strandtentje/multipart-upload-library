@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ziewaar.Web.UploadServer", "Ziewaar.Web.UploadServer\Ziewaar.Web.UploadServer.csproj", "{8C81DBD0-8923-43CA-96D7-5234B418DA92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ejije.Logging", "..\UniversalDSPLink\Ejije.Logging\Ejije.Logging.csproj", "{0CB05122-16A7-4F36-B906-C59CC4D5F10C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ziewaar.Web.UploaderServerSupport", "Ziewaar.Web.UploaderServerSupport\Ziewaar.Web.UploaderServerSupport.csproj", "{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ziewaar.Web.GdiProgressGrapher", "Ziewaar.Web.GdiProgressGrapher\Ziewaar.Web.GdiProgressGrapher.csproj", "{4C2F19E8-C9DA-4408-9D9F-689E5BBE4F2C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C81DBD0-8923-43CA-96D7-5234B418DA92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C81DBD0-8923-43CA-96D7-5234B418DA92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C81DBD0-8923-43CA-96D7-5234B418DA92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C81DBD0-8923-43CA-96D7-5234B418DA92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CB05122-16A7-4F36-B906-C59CC4D5F10C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CB05122-16A7-4F36-B906-C59CC4D5F10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CB05122-16A7-4F36-B906-C59CC4D5F10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CB05122-16A7-4F36-B906-C59CC4D5F10C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C2F19E8-C9DA-4408-9D9F-689E5BBE4F2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C2F19E8-C9DA-4408-9D9F-689E5BBE4F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C2F19E8-C9DA-4408-9D9F-689E5BBE4F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C2F19E8-C9DA-4408-9D9F-689E5BBE4F2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

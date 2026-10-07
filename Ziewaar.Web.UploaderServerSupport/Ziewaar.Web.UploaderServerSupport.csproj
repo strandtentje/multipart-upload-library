@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ziewaar.Web.UploaderServerSupport</RootNamespace>
+    <AssemblyName>Ziewaar.Web.UploaderServerSupport</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommonUploadReceiver.cs" />
+    <Compile Include="CommonUploadSizeGovernor.cs" />
+    <Compile Include="DynamicPage.cs" />
+    <Compile Include="DynamicPageInstruction.cs" />
+    <Compile Include="DynamicPageInstructionEnumerable.cs" />
+    <Compile Include="DynamicPages.cs" />
+    <Compile Include="FileText.cs" />
+    <Compile Include="HttpResponseExtensions.cs" />
+    <Compile Include="IPlaceholderResolver.cs" />
+    <Compile Include="IProgressGrapher.cs" />
+    <Compile Include="ISessionSourcer.cs" />
+    <Compile Include="IUploadReceiver.cs" />
+    <Compile Include="IUploadSizeGovernor.cs" />
+    <Compile Include="RoutePartitioner.cs" />
+    <Compile Include="UploadBox.cs" />
+    <Compile Include="UploadBoxComparerById.cs" />
+    <Compile Include="UploadBoxExtensions.cs" />
+    <Compile Include="UploadBoxRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticPages.cs" />
+    <Compile Include="UploadBoxSpecificResolver.cs" />
+    <Compile Include="UploadRouter.cs" />
+    <Compile Include="UploadSlot.cs" />
+    <Compile Include="UploadStage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="100-BadMethod.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="110-BadGetRequest.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="120-UploaderGone.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="200-UploadPage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="130-BadGetFunction.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="140-BadUploadStart.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="150-ConflictingUpload.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="210-ProgressPage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="160-UploadTooBig.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UniversalDSPLink\Ejije.Logging\Ejije.Logging.csproj">
+      <Project>{0CB05122-16A7-4F36-B906-C59CC4D5F10C}</Project>
+      <Name>Ejije.Logging</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
