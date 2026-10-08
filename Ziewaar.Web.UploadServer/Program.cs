@@ -11,10 +11,10 @@ namespace Ziewaar.Web.UploadServer
 {
     class Program
     {
-        private static readonly Log 
+        private static readonly Log
             UnknownCommand =
             Log.Shit("Unknown command; I understand: `quit`, `nb`"),
-            NewBoxId = 
+            NewBoxId =
             Log.Cool("New {uploadboxid}");
         private static UploadRouter Router;
         private static UploadBoxRepository BoxRepository;
@@ -27,8 +27,9 @@ namespace Ziewaar.Web.UploadServer
                 new GdiProgressGrapher.GdiProgressGrapher(150, 32),
                 new CommonUploadReceiver(
                     new CommonUploadSizeGovernor(
-                        8 * CommonUploadSizeGovernor.GB, 
-                        60 * CommonUploadSizeGovernor.GB)),
+                        8 * CommonUploadSizeGovernor.GB,
+                        60 * CommonUploadSizeGovernor.GB), 
+                    new CommonMultipartUploadParserFactory()),
                 BoxRepository);
 
             using (var server = new Webserver("http://+:8243/"))

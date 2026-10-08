@@ -45,6 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BufferScheduler.cs" />
+    <Compile Include="ByteSequenceNode.cs" />
+    <Compile Include="ByteSequenceNodeTag.cs" />
+    <Compile Include="CommonMultipartComponentIngestor.cs" />
+    <Compile Include="CommonMultipartUploadParserWorker.cs" />
+    <Compile Include="DataRateCollection.cs" />
+    <Compile Include="CommonMultipartUploadParser.cs" />
+    <Compile Include="CommonMultipartUploadParserFactory.cs" />
     <Compile Include="CommonUploadReceiver.cs" />
     <Compile Include="CommonUploadSizeGovernor.cs" />
     <Compile Include="DynamicPage.cs" />
@@ -52,12 +60,29 @@
     <Compile Include="DynamicPageInstructionEnumerable.cs" />
     <Compile Include="DynamicPages.cs" />
     <Compile Include="FileText.cs" />
+    <Compile Include="FormStartComponentResult.cs" />
+    <Compile Include="HeaderNames.cs" />
+    <Compile Include="HttpHeaderCollection.cs" />
+    <Compile Include="HttpHeader.cs" />
+    <Compile Include="HttpHeaderCollectionExtensions.cs" />
+    <Compile Include="HttpHeaderExtensions.cs" />
+    <Compile Include="HttpHeaderProperty.cs" />
     <Compile Include="HttpResponseExtensions.cs" />
+    <Compile Include="IMultipartComponentIngestor.cs" />
+    <Compile Include="IMultipartComponentResult.cs" />
+    <Compile Include="IMultipartUploadParser.cs" />
+    <Compile Include="IMultipartUploadParserFactory.cs" />
     <Compile Include="IPlaceholderResolver.cs" />
     <Compile Include="IProgressGrapher.cs" />
     <Compile Include="ISessionSourcer.cs" />
     <Compile Include="IUploadReceiver.cs" />
     <Compile Include="IUploadSizeGovernor.cs" />
+    <Compile Include="MetaBuffer.cs" />
+    <Compile Include="MultipartByteSequenceGovernor.cs" />
+    <Compile Include="MultipartComponentFaultyResult.cs" />
+    <Compile Include="MultipartInputFieldResult.cs" />
+    <Compile Include="MultipartPositionsGovernor.cs" />
+    <Compile Include="MultipartSingleFileResult.cs" />
     <Compile Include="RoutePartitioner.cs" />
     <Compile Include="UploadBox.cs" />
     <Compile Include="UploadBoxComparerById.cs" />
@@ -69,6 +94,7 @@
     <Compile Include="UploadRouter.cs" />
     <Compile Include="UploadSlot.cs" />
     <Compile Include="UploadStage.cs" />
+    <Compile Include="VirtualInspectionBuffer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="100-BadMethod.html">
