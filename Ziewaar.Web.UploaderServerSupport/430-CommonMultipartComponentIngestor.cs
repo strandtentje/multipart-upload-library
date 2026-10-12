@@ -11,7 +11,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         private readonly Stack<byte[]> Boundaries = new Stack<byte[]>();
         private readonly List<IMultipartComponentResult> FinishableResults =
             new List<IMultipartComponentResult>();
-        private readonly IMultipartComponentResult UnfinishedResult;
+        private IMultipartComponentResult UnfinishedResult;
         private readonly string[] AcceptedFields;
         private readonly string TargetDirectory;
 
@@ -24,7 +24,13 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.UnfinishedResult = new FormStartComponentResult();
         }
 
-        public bool IsExpectingContent { get { return UnfinishedResult.IsExpectingContent; } }
+        public bool IsExpectingContent 
+        { 
+            get 
+            { 
+                return UnfinishedResult.IsExpectingContent; 
+            } 
+        }
 
         public bool TryHaveBoundary(out byte[] boundary)
         {
@@ -45,13 +51,16 @@ namespace Ziewaar.Web.UploaderServerSupport
             var headers = HttpHeaderCollection.Parse(headerString);
             var contentDisposition = headers.ByName(HeaderNames.ContentDisposition);
             var contentType = headers.ByName(HeaderNames.ContentType);
-            var transferEncoding = headers.ByName(HeaderNames.ContentTransferEncoding);
+            var transferEncoding = headers.ByName(
+                HeaderNames.ContentTransferEncoding);
 
             if (contentDisposition.HasMainValueCI("form-data"))
-                return GiveFormDataHeader(contentDisposition, contentType, transferEncoding);
+                return GiveFormDataHeader(
+                    contentDisposition, contentType, transferEncoding);
 
             if (contentDisposition.HasMainValueCI("file"))
-                return GiveSubFileHeader(contentDisposition, contentType, transferEncoding);
+                return GiveSubFileHeader(
+                    contentDisposition, contentType, transferEncoding);
 
             FinishableResults.Add(new MultipartComponentFaultyResult(
                     "Unsupported or Invalid Content-Disposition"));

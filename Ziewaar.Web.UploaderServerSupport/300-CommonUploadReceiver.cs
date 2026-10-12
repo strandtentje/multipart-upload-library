@@ -13,7 +13,9 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         private readonly IUploadSizeGovernor SizeGovernor;
         private readonly IMultipartUploadParserFactory ParserFactory;
-        public CommonUploadReceiver(IUploadSizeGovernor sizeGovernor, IMultipartUploadParserFactory parserFactory)
+        public CommonUploadReceiver(
+            IUploadSizeGovernor sizeGovernor, 
+            IMultipartUploadParserFactory parserFactory)
         {
             this.SizeGovernor = sizeGovernor;
             this.ParserFactory = parserFactory;
@@ -80,63 +82,11 @@ namespace Ziewaar.Web.UploaderServerSupport
             {
                 using (var receiveParser = ParserFactory.Create(
                     selectedUploadBox.BoundaryBytes, 
-                    selectedUploadBox.TargetDirectory))
+                    selectedUploadBox.TargetDirectory,
+                    selectedUploadBox.AcceptedFields))
                 {
-                    byte[] buffer;
-                    int totalReceiveCount = 0;
-                    var dataRate = new DataRateCollection(7);
-
-                    for (int readCount = req.InputStream.Read(
-                        buffer = receiveParser.PopForReceiving(), 0, buffer.Length);
-                        readCount > 0;
-                        readCount = req.InputStream.Read(
-                        buffer = receiveParser.PopForReceiving(), 0, buffer.Length))
-                    {
-                        // we report received size and data rate here
-                        // this might fail if ie. there was too much data
-                        // or some other cancellation condition was met.
-                        totalReceiveCount += readCount;
-                        if (!selectedUploadBox.TryUpdateProgress(
-                            totalReceiveCount, dataRate.Add(totalReceiveCount)))
-                        {
-                            selectedUploadBox.TrySetStopMessage("Cancelled");
-                            return false;
-                        }
-
-                        // for best boundary finding at the receive parser,
-                        // we would like to hand in the fullest possible 
-                        // receive buffer. no wimpy 20 byte stuff.
-                        // Stream.Read doesn't guarantee that, but we can
-                        // Read some more.
-                        int fillUpCount = readCount;
-                        while (readCount > 0 && fillUpCount < buffer.Length)
-                        {
-                            readCount = req.InputStream.Read(
-                                buffer, fillUpCount, buffer.Length - fillUpCount);
-                            fillUpCount += readCount;
-
-                            // we report received size and data rate again, here.
-                            // good for resolution and early failure when the
-                            // client is giving is too much.
-                            totalReceiveCount += readCount;
-                            if (!selectedUploadBox.TryUpdateProgress(
-                                totalReceiveCount, dataRate.Add(totalReceiveCount)))
-                            {
-                                selectedUploadBox.TrySetStopMessage("Cancelled");
-                                return false;
-                            }
-                        }
-                        
-                        receiveParser.PushForProcessing(buffer, fillUpCount);
-
-                        // when trying to fill up we might have read an 
-                        // eof. then we shouldn't read again and skip
-                        // to finish
-                        if (readCount == 0) break;
-                    }
-                    receiveParser.Finish();
+                    return ReceiveLoop(req, receiveParser, selectedUploadBox);
                 }
-                return true;
             }
             catch (Exception ex)
             {
@@ -146,6 +96,67 @@ namespace Ziewaar.Web.UploaderServerSupport
                     "Failed");
                 return false;
             }
+        }
+
+        private bool ReceiveLoop(HttpListenerRequest req, 
+            IMultipartUploadParser receiveParser,
+            UploadBox selectedUploadBox)
+        {
+
+            byte[] buffer;
+            int totalReceiveCount = 0;
+            var dataRate = new DataRateCollection(7);
+
+            for (int readCount = req.InputStream.Read(
+                buffer = receiveParser.PopForReceiving(), 0, buffer.Length);
+                readCount > 0;
+                readCount = req.InputStream.Read(
+                buffer = receiveParser.PopForReceiving(), 0, buffer.Length))
+            {
+                // we report received size and data rate here
+                // this might fail if ie. there was too much data
+                // or some other cancellation condition was met.
+                totalReceiveCount += readCount;
+                if (!selectedUploadBox.TryUpdateProgress(
+                    totalReceiveCount, dataRate.Add(totalReceiveCount)))
+                {
+                    selectedUploadBox.TrySetStopMessage("Cancelled");
+                    return false;
+                }
+
+                // for best boundary finding at the receive parser,
+                // we would like to hand in the fullest possible 
+                // receive buffer. no wimpy 20 byte stuff.
+                // Stream.Read doesn't guarantee that, but we can
+                // Read some more.
+                int fillUpCount = readCount;
+                while (readCount > 0 && fillUpCount < buffer.Length)
+                {
+                    readCount = req.InputStream.Read(
+                        buffer, fillUpCount, buffer.Length - fillUpCount);
+                    fillUpCount += readCount;
+
+                    // we report received size and data rate again, here.
+                    // good for resolution and early failure when the
+                    // client is giving is too much.
+                    totalReceiveCount += readCount;
+                    if (!selectedUploadBox.TryUpdateProgress(
+                        totalReceiveCount, dataRate.Add(totalReceiveCount)))
+                    {
+                        selectedUploadBox.TrySetStopMessage("Cancelled");
+                        return false;
+                    }
+                }
+
+                receiveParser.PushForProcessing(buffer, fillUpCount);
+
+                // when trying to fill up we might have read an 
+                // eof. then we shouldn't read again and skip
+                // to finish
+                if (readCount == 0) break;
+            }
+            receiveParser.Finish();
+            return true;
         }
     }
 }

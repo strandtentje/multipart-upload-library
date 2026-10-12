@@ -13,7 +13,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         public bool IsExpectingContent { get { return true; } }
 
         public readonly string FieldName, TempPath, FullPath, ContentType;
-        private readonly FileStream TempFileHandle;
+        private FileStream TempFileHandle;
         private static readonly char[] IllegalFilenameChars = Path.GetInvalidFileNameChars();
         private MultipartSingleFileResult(
             string fieldName,

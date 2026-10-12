@@ -9,6 +9,7 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         IMultipartUploadParser Create(
             byte[] boundary, 
-            string targetDirectory);
+            string targetDirectory,
+            string[] acceptedFields);
     }
 }

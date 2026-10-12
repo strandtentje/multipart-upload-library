@@ -45,83 +45,81 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BufferScheduler.cs" />
-    <Compile Include="ByteSequenceNode.cs" />
-    <Compile Include="ByteSequenceNodeTag.cs" />
-    <Compile Include="CommonMultipartComponentIngestor.cs" />
-    <Compile Include="CommonMultipartUploadParserWorker.cs" />
-    <Compile Include="DataRateCollection.cs" />
-    <Compile Include="CommonMultipartUploadParser.cs" />
-    <Compile Include="CommonMultipartUploadParserFactory.cs" />
-    <Compile Include="CommonUploadReceiver.cs" />
-    <Compile Include="CommonUploadSizeGovernor.cs" />
-    <Compile Include="DynamicPage.cs" />
-    <Compile Include="DynamicPageInstruction.cs" />
-    <Compile Include="DynamicPageInstructionEnumerable.cs" />
-    <Compile Include="DynamicPages.cs" />
-    <Compile Include="FileText.cs" />
-    <Compile Include="FormStartComponentResult.cs" />
-    <Compile Include="HeaderNames.cs" />
-    <Compile Include="HttpHeaderCollection.cs" />
-    <Compile Include="HttpHeader.cs" />
-    <Compile Include="HttpHeaderCollectionExtensions.cs" />
-    <Compile Include="HttpHeaderExtensions.cs" />
-    <Compile Include="HttpHeaderProperty.cs" />
-    <Compile Include="HttpResponseExtensions.cs" />
-    <Compile Include="IMultipartComponentIngestor.cs" />
-    <Compile Include="IMultipartComponentResult.cs" />
-    <Compile Include="IMultipartUploadParser.cs" />
-    <Compile Include="IMultipartUploadParserFactory.cs" />
-    <Compile Include="IPlaceholderResolver.cs" />
-    <Compile Include="IProgressGrapher.cs" />
-    <Compile Include="ISessionSourcer.cs" />
-    <Compile Include="IUploadReceiver.cs" />
-    <Compile Include="IUploadSizeGovernor.cs" />
-    <Compile Include="MetaBuffer.cs" />
-    <Compile Include="MultipartByteSequenceGovernor.cs" />
-    <Compile Include="MultipartComponentFaultyResult.cs" />
-    <Compile Include="MultipartInputFieldResult.cs" />
-    <Compile Include="MultipartPositionsGovernor.cs" />
-    <Compile Include="MultipartSingleFileResult.cs" />
-    <Compile Include="RoutePartitioner.cs" />
-    <Compile Include="UploadBox.cs" />
-    <Compile Include="UploadBoxComparerById.cs" />
-    <Compile Include="UploadBoxExtensions.cs" />
-    <Compile Include="UploadBoxRepository.cs" />
+    <Compile Include="Buffers\FixedBufferPool.cs" />
+    <Compile Include="Models\ByteSequenceNode.cs" />
+    <Compile Include="Models\ByteSequenceNodeTag.cs" />
+    <Compile Include="430-CommonMultipartComponentIngestor.cs" />
+    <Compile Include="420-CommonMultipartUploadParserWorker.cs" />
+    <Compile Include="Collections\DataRateCollection.cs" />
+    <Compile Include="410-CommonMultipartUploadParser.cs" />
+    <Compile Include="400-CommonMultipartUploadParserFactory.cs" />
+    <Compile Include="300-CommonUploadReceiver.cs" />
+    <Compile Include="310-CommonUploadSizeGovernor.cs" />
+    <Compile Include="Pages\DynamicPage.cs" />
+    <Compile Include="Pages\DynamicPageInstruction.cs" />
+    <Compile Include="Pages\DynamicPageInstructionEnumerable.cs" />
+    <Compile Include="Pages\DynamicPages.cs" />
+    <Compile Include="Pages\FileText.cs" />
+    <Compile Include="Results\FormStartComponentResult.cs" />
+    <Compile Include="Models\HeaderNames.cs" />
+    <Compile Include="Collections\HttpHeaderCollection.cs" />
+    <Compile Include="Models\HttpHeader.cs" />
+    <Compile Include="Extensions\HttpHeaderCollectionExtensions.cs" />
+    <Compile Include="Extensions\HttpHeaderExtensions.cs" />
+    <Compile Include="Models\HttpHeaderProperty.cs" />
+    <Compile Include="Extensions\HttpResponseExtensions.cs" />
+    <Compile Include="Interfaces\IMultipartComponentIngestor.cs" />
+    <Compile Include="Interfaces\IMultipartComponentResult.cs" />
+    <Compile Include="Interfaces\IMultipartUploadParser.cs" />
+    <Compile Include="Interfaces\IMultipartUploadParserFactory.cs" />
+    <Compile Include="Interfaces\IPlaceholderResolver.cs" />
+    <Compile Include="Interfaces\IProgressGrapher.cs" />
+    <Compile Include="Interfaces\ISessionSourcer.cs" />
+    <Compile Include="Interfaces\IUploadReceiver.cs" />
+    <Compile Include="Interfaces\IUploadSizeGovernor.cs" />
+    <Compile Include="Buffers\FixedBuffer.cs" />
+    <Compile Include="440-MultipartByteSequenceGovernor.cs" />
+    <Compile Include="Results\MultipartComponentFaultyResult.cs" />
+    <Compile Include="Results\MultipartInputFieldResult.cs" />
+    <Compile Include="Collections\MultipartParsingPositionsCollection.cs" />
+    <Compile Include="Results\MultipartSingleFileResult.cs" />
+    <Compile Include="Models\UploadBox.cs" />
+    <Compile Include="Models\UploadBoxComparerById.cs" />
+    <Compile Include="Extensions\UploadBoxExtensions.cs" />
+    <Compile Include="200-UploadBoxRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StaticPages.cs" />
-    <Compile Include="UploadBoxSpecificResolver.cs" />
-    <Compile Include="UploadRouter.cs" />
-    <Compile Include="UploadSlot.cs" />
-    <Compile Include="UploadStage.cs" />
-    <Compile Include="VirtualInspectionBuffer.cs" />
+    <Compile Include="Pages\StaticPages.cs" />
+    <Compile Include="Pages\UploadBoxSpecificResolver.cs" />
+    <Compile Include="100-UploadRouter.cs" />
+    <Compile Include="Models\UploadStage.cs" />
+    <Compile Include="Buffers\VirtualInspectionBuffer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="100-BadMethod.html">
+    <Content Include="Html\100-BadMethod.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="110-BadGetRequest.html">
+    <Content Include="Html\110-BadGetRequest.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="120-UploaderGone.html">
+    <Content Include="Html\120-UploaderGone.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="200-UploadPage.html">
+    <Content Include="Html\200-UploadPage.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="130-BadGetFunction.html">
+    <Content Include="Html\130-BadGetFunction.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="140-BadUploadStart.html">
+    <Content Include="Html\140-BadUploadStart.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="150-ConflictingUpload.html">
+    <Content Include="Html\150-ConflictingUpload.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="210-ProgressPage.html">
+    <Content Include="Html\210-ProgressPage.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="160-UploadTooBig.html">
+    <Content Include="Html\160-UploadTooBig.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

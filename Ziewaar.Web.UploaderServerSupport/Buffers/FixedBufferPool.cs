@@ -7,26 +7,26 @@ using System.Diagnostics;
 
 namespace Ziewaar.Web.UploaderServerSupport
 {
-    public class BufferScheduler : IDisposable
+    public class FixedBufferPool : IDisposable
     {
         public readonly int Capacity;
         public bool IsDisposing { get; private set; }
         
-        private readonly Queue<MetaBuffer> BackingBuffers;
+        private readonly Queue<FixedBuffer> BackingBuffers;
         private readonly Semaphore UnderrunGuard, OverrunGuard;
         private readonly object QueueLock = new object();
 
-        public BufferScheduler(int capacity, int dataRateResolution,
+        public FixedBufferPool(int capacity, int dataRateResolution,
             params byte[][] allocatedBuffers)
         {
             this.Capacity = capacity;
             this.UnderrunGuard = new Semaphore(0, capacity);
             this.OverrunGuard = new Semaphore(capacity, capacity);
-            this.BackingBuffers = new Queue<MetaBuffer>();
+            this.BackingBuffers = new Queue<FixedBuffer>();
 
             foreach (var allocation in allocatedBuffers)
             {
-                BackingBuffers.Enqueue(new MetaBuffer(
+                BackingBuffers.Enqueue(new FixedBuffer(
                     allocation, allocation.Length));
                 this.UnderrunGuard.Release(1);
                 if (!this.OverrunGuard.WaitOne(100))
@@ -35,7 +35,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             }
         }
 
-        public static BufferScheduler CreatePreAllocated(
+        public static FixedBufferPool CreatePreAllocated(
             int capacity, int bufferSize)
         {
             var AllocatedArrays = new List<byte[]>();
@@ -43,12 +43,12 @@ namespace Ziewaar.Web.UploaderServerSupport
             {
                 AllocatedArrays.Add(new byte[bufferSize]);
             }
-            return new BufferScheduler(capacity, 0, AllocatedArrays.ToArray());
+            return new FixedBufferPool(capacity, 0, AllocatedArrays.ToArray());
         }
 
-        public static BufferScheduler CreateMeasuring(int capacity)
+        public static FixedBufferPool CreateMeasuring(int capacity)
         {
-            return new BufferScheduler(capacity, capacity);
+            return new FixedBufferPool(capacity, capacity);
         }
 
         public int Enqueue(byte[] buffer, int count)
@@ -56,7 +56,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             OverrunGuard.WaitOne();
             lock (QueueLock)
             {
-                BackingBuffers.Enqueue(new MetaBuffer(buffer, count));
+                BackingBuffers.Enqueue(new FixedBuffer(buffer, count));
                 count = BackingBuffers.Count;
             }
             UnderrunGuard.Release(1);
@@ -78,8 +78,8 @@ namespace Ziewaar.Web.UploaderServerSupport
             }
             else
             {
-                buffer = MetaBuffer.Null.Allocation;
-                count = MetaBuffer.Null.Count;
+                buffer = FixedBuffer.Null.Allocation;
+                count = FixedBuffer.Null.Count;
                 return false;
             }
         }

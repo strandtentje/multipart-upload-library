@@ -11,11 +11,12 @@ namespace Ziewaar.Web.UploaderServerSupport
         private readonly Dictionary<UploadBox, UploadBox> UploadBoxes 
             = new Dictionary<UploadBox, UploadBox>(new UploadBoxComparerById());
 
-        public UploadBox Enter(string sessionId, string path)
+        public UploadBox Enter(string sessionId, string path, 
+            string[] acceptedFields)
         {
             lock (UploadBoxesLock)
             {
-                var newBox = UploadBox.CreateFresh(sessionId, path);
+                var newBox = UploadBox.CreateFresh(sessionId, path, acceptedFields);
                 if (UploadBoxes.ContainsKey(newBox))
                     throw new InvalidOperationException(
                         "Unexpectedly created a duplicate upload box");

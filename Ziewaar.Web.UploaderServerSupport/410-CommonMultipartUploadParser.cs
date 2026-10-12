@@ -8,7 +8,7 @@ namespace Ziewaar.Web.UploaderServerSupport
 {
     public class CommonMultipartUploadParser : IMultipartUploadParser
     {
-        private readonly BufferScheduler Receiving, Processing;
+        private readonly FixedBufferPool Receiving, Processing;
         private readonly VirtualInspectionBuffer Inspector;
         private readonly IMultipartComponentIngestor Ingestor;
         private readonly Thread WorkerThread;
@@ -18,7 +18,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         public string Fault { get { return Worker.Fault; } }
 
         public CommonMultipartUploadParser(
-            BufferScheduler forReceiving, BufferScheduler forProcessing,
+            FixedBufferPool forReceiving, FixedBufferPool forProcessing,
             IMultipartComponentIngestor ingestor)
         {
             this.Receiving = forReceiving;
@@ -56,8 +56,8 @@ namespace Ziewaar.Web.UploaderServerSupport
 
         public void Finish()
         {
-            this.Processing.Enqueue(MetaBuffer.Null.Allocation, 0);
-            this.Processing.Enqueue(MetaBuffer.Null.Allocation, 0);
+            this.Processing.Enqueue(FixedBuffer.Null.Allocation, 0);
+            this.Processing.Enqueue(FixedBuffer.Null.Allocation, 0);
             this.WorkerThread.Join();
             this.Ingestor.Finish();
         }

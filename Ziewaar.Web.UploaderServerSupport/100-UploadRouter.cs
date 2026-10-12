@@ -64,7 +64,8 @@ namespace Ziewaar.Web.UploaderServerSupport
                 rsp.WriteUtf8Bytes(400, StaticPages.Instance.Pg110BadGetRequest);
                 return false;
             }
-            else if (!UploadBoxes.TryPeek(sessionId, uploadBoxId, out selectedUploadBox))
+            else if (!UploadBoxes.TryPeek(sessionId, uploadBoxId, 
+                out selectedUploadBox))
             {
                 rsp.WriteUtf8Bytes(410, StaticPages.Instance.Pg120UploaderGone);
                 return false;
@@ -80,7 +81,8 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             string functionId;
             UploadBox selectedUploadBox;
-            if (!ValidateUploadFunction(req, rsp, out functionId, out selectedUploadBox))
+            if (!ValidateUploadFunction(req, rsp, out functionId, 
+                out selectedUploadBox))
                 return;
 
             switch (functionId)
@@ -110,7 +112,8 @@ namespace Ziewaar.Web.UploaderServerSupport
 
                     break;
                 default:
-                    rsp.WriteUtf8Bytes(400, StaticPages.Instance.Pg130BadGetFunction);
+                    rsp.WriteUtf8Bytes(400, 
+                        StaticPages.Instance.Pg130BadGetFunction);
                     break;
             }
         }
@@ -118,7 +121,8 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             string functionId;
             UploadBox selectedUploadBox;
-            if (!ValidateUploadFunction(req, rsp, out functionId, out selectedUploadBox))
+            if (!ValidateUploadFunction(req, rsp, out functionId, 
+                out selectedUploadBox))
                 return;
 
             switch (functionId)
@@ -127,7 +131,8 @@ namespace Ziewaar.Web.UploaderServerSupport
                     // we will always dispose the uploadBox after upload.
                     using (selectedUploadBox)
                     {
-                        if (!this.Receiver.TryValidateUpload(req, rsp, selectedUploadBox))
+                        if (!this.Receiver.TryValidateUpload(req, rsp,
+                            selectedUploadBox))
                             return;
 
                         if (!this.Receiver.TryReceiveUpload(req, selectedUploadBox))

@@ -27,7 +27,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         public void Finish()
         {
             var bytes = Data.ToArray();
-            FinishedValue = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            _finishedValue = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
         }
 
         public string Fault

@@ -11,6 +11,8 @@ namespace Ziewaar.Web.UploaderServerSupport
     public class UploadBox : IDisposable
     {
         public readonly string SessionId, TargetDirectory, UploadBoxId, TempFile;
+        public readonly string[] AcceptedFields;
+
         public long ContentLengthAnnounced { get; private set; }
         public long ContentLengthProgress { get; private set; }
         public long UploadBytesPerSecond { get; private set; }
@@ -30,12 +32,14 @@ namespace Ziewaar.Web.UploaderServerSupport
         private EventWaitHandle Stopper = new EventWaitHandle(
             false, EventResetMode.ManualReset);
 
-        public UploadBox(string sessionId, string targetDirectory, string uploadBoxId)
+        public UploadBox(string sessionId, string targetDirectory, 
+            string uploadBoxId, string[] acceptedFields)
         {
             this.SessionId = sessionId;
             this.TargetDirectory = targetDirectory;
             this.UploadBoxId = uploadBoxId;
             this.TempFile = Path.GetTempFileName();
+            this.AcceptedFields = acceptedFields;
         }
 
         public bool TrySetStopMessage(string message)
@@ -116,15 +120,17 @@ namespace Ziewaar.Web.UploaderServerSupport
             }
         }
 
-        public static UploadBox CreateFresh(string sessionId, string path)
+        public static UploadBox CreateFresh(string sessionId, string path,
+            string[] acceptedFields)
         {
             return new UploadBox(
                 sessionId, path,
-                Guid.NewGuid().ToString());
+                Guid.NewGuid().ToString(), acceptedFields);
         }
         public static UploadBox CreateFinder(string sessionId, string uploadBoxId)
         {
-            return new UploadBox(sessionId, string.Empty, uploadBoxId);
+            return new UploadBox(sessionId, string.Empty, uploadBoxId,
+                new string[0]);
         }
 
         private static readonly Log

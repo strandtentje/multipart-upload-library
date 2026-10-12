@@ -20,8 +20,8 @@ namespace Ziewaar.Web.UploaderServerSupport
     /// </summary>
     public class VirtualInspectionBuffer
     {
-        private MetaBuffer Window = MetaBuffer.Null;
-        private MetaBuffer Peek = MetaBuffer.Null;
+        private FixedBuffer Window = FixedBuffer.Null;
+        private FixedBuffer Peek = FixedBuffer.Null;
         /// <summary>
         /// Inclusive starting position of window in view;
         /// </summary>
@@ -34,7 +34,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         /// <summary>
         /// Buffer currently in view.
         /// </summary>
-        public MetaBuffer ReadingWindow { get { return Window; } }
+        public FixedBuffer ReadingWindow { get { return Window; } }
 
         /// <summary>
         /// Provide the next frame of data to the Inspection Buffer,
@@ -50,7 +50,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             WindowOffset += Window.Count;
             var retiree = Window;
             Window = Peek;
-            Peek = new MetaBuffer(buffer, count);
+            Peek = new FixedBuffer(buffer, count);
             return retiree.Allocation;
         }
 
@@ -61,7 +61,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             get
             {
-                return (Window != MetaBuffer.Null && Window.Count == 0);
+                return (Window != FixedBuffer.Null && Window.Count == 0);
             }
         }
 
@@ -226,7 +226,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         /// <returns></returns>
         public long PeekIndexOf(byte b, long startAt)
         {
-            if (Window == MetaBuffer.Null)
+            if (Window == FixedBuffer.Null)
                 return -1;
             var virtualStart = (int)(startAt - WindowOffset);
             if (virtualStart < 0)
@@ -238,7 +238,7 @@ namespace Ziewaar.Web.UploaderServerSupport
                 if (result >= virtualStart)
                     return WindowOffset + result;
             }
-            if (Peek == MetaBuffer.Null)
+            if (Peek == FixedBuffer.Null)
                 return -1;
             // in case startAt is in the Peek buffer,
             // we'd have to offset our virtualStart with the 
@@ -269,7 +269,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         /// </returns>
         public long IndexOf(byte b, long startAt)
         {
-            if (Window == MetaBuffer.Null)
+            if (Window == FixedBuffer.Null)
                 return -1;
             var virtualStart = (int)(startAt - WindowOffset);
             if (virtualStart < 0)

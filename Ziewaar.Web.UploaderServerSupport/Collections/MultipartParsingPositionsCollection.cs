@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ziewaar.Web.UploaderServerSupport
 {
-    public class MultipartPositionsGovernor : IEnumerable<long>
+    public class MultipartParsingPositionsCollection : IEnumerable<long>
     {
         public long
             BoundaryStart, BoundaryEnd,

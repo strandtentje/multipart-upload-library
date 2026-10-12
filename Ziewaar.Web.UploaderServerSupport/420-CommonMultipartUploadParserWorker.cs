@@ -7,16 +7,16 @@ namespace Ziewaar.Web.UploaderServerSupport
 {
     public class CommonMultipartUploadParserWorker : IDisposable
     {
-        private readonly BufferScheduler Receiving, Processing;
+        private readonly FixedBufferPool Receiving, Processing;
         private readonly VirtualInspectionBuffer Inspector;
         private readonly IMultipartComponentIngestor Ingestor;
         private readonly MultipartByteSequenceGovernor Boundaries;
-        private readonly MultipartPositionsGovernor Positions;
+        private readonly MultipartParsingPositionsCollection Positions;
         public bool IsDisposing { get; private set; }
         public string Fault { get; private set; }
 
         public CommonMultipartUploadParserWorker(
-            BufferScheduler receiving, BufferScheduler processing,
+            FixedBufferPool receiving, FixedBufferPool processing,
             VirtualInspectionBuffer inspector,
             IMultipartComponentIngestor ingestor)
         {
