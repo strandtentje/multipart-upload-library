@@ -53,12 +53,14 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.TempFileHandle.Write(data, start, length);
         }
 
-        public void Finish()
+        public IMultipartFinishedComponentResult Finish()
         {
             this.TempFileHandle.Flush();
             this.TempFileHandle.Close();
             this.TempFileHandle = null;
             File.Move(TempPath, FullPath);
+            return new MultipartFinishedSingleFileResult(
+                this.Name, this.FullPath);
         }
 
         public void Dispose()
@@ -72,6 +74,11 @@ namespace Ziewaar.Web.UploaderServerSupport
             {
                 File.Delete(TempPath);
             }
+        }
+        public override string ToString()
+        {
+            return string.Format("MultipartSingleFileResult({0})",
+                this.FullPath);
         }
     }
 }

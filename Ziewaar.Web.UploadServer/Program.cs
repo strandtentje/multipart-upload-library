@@ -6,11 +6,13 @@ using System.Net;
 using Ejije.Logging;
 using Ziewaar.Web.UploaderServerSupport;
 using Ziewaar.Web.GdiProgressGrapher;
+using System.Diagnostics;
 
 namespace Ziewaar.Web.UploadServer
 {
     class Program
     {
+        private const string BROWSER_EXE = @"D:\mypal-78.0.2.en-US.win32\mypal\mypal.exe";
         private static readonly Log
             UnknownCommand =
             Log.Shit("Unknown command; I understand: `quit`, `nb`"),
@@ -29,7 +31,8 @@ namespace Ziewaar.Web.UploadServer
                     new CommonUploadSizeGovernor(
                         8 * CommonUploadSizeGovernor.GB,
                         60 * CommonUploadSizeGovernor.GB), 
-                    new CommonMultipartUploadParserFactory()),
+                    new CommonMultipartUploadParserFactory(
+                        new TestingContentTypeValidator())),
                 BoxRepository);
 
             using (var server = new Webserver("http://+:8243/"))
@@ -39,13 +42,26 @@ namespace Ziewaar.Web.UploadServer
                     !StringComparer.OrdinalIgnoreCase.Equals(cmd, "quit");
                     cmd = Console.ReadLine())
                 {
+                    var myDocs =
+                        Environment.GetFolderPath(
+                            Environment.SpecialFolder.MyDocuments);
+
                     switch (cmd)
                     {
                         case "nb":
-                            var nb = BoxRepository.Enter("TEST",
-                                Environment.GetFolderPath(
-                                    Environment.SpecialFolder.MyDocuments));
+                            var nb = BoxRepository.Enter(
+                                "TEST", myDocs, new string[] { "files" });
+                            
                             Log.Post(NewBoxId, nb.UploadBoxId);
+                            break;
+                        case "nbx":
+                            var nbx = BoxRepository.Enter(
+                                "TEST", myDocs, new string[] { "files" });
+                            var nburl = string.Format(
+                                "http://{0}/?uploadBoxId={1}&functionId=COMBO",
+                                "localhost:8243", nbx.UploadBoxId);
+                            Log.Post(NewBoxId, nbx.UploadBoxId);
+                            Process.Start(BROWSER_EXE, nburl);
                             break;
                         default:
                             Log.Post(UnknownCommand);

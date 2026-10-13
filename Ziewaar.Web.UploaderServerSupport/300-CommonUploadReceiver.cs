@@ -98,6 +98,14 @@ namespace Ziewaar.Web.UploaderServerSupport
             }
         }
 
+        private static readonly Log
+            MainReceive = Log.Tech(
+            "Main receive routine: {part}/{cum} of {total} at {rate}"),
+            ReceiveStop = Log.Warn(
+            "Receive upload stop likely due to too much data"),
+            AuxReceive = Log.Tech(
+            "Trying to top up; {part}/{cum} of {total} at {rate}");
+
         private bool ReceiveLoop(HttpListenerRequest req, 
             IMultipartUploadParser receiveParser,
             UploadBox selectedUploadBox)
@@ -120,9 +128,13 @@ namespace Ziewaar.Web.UploaderServerSupport
                 if (!selectedUploadBox.TryUpdateProgress(
                     totalReceiveCount, dataRate.Add(totalReceiveCount)))
                 {
+                    Log.Post(ReceiveStop);
                     selectedUploadBox.TrySetStopMessage("Cancelled");
                     return false;
                 }
+                Log.Post(MainReceive, readCount, totalReceiveCount, 
+                    selectedUploadBox.ContentLengthAnnounced,
+                    selectedUploadBox.UploadBytesPerSecond); 
 
                 // for best boundary finding at the receive parser,
                 // we would like to hand in the fullest possible 
@@ -146,6 +158,9 @@ namespace Ziewaar.Web.UploaderServerSupport
                         selectedUploadBox.TrySetStopMessage("Cancelled");
                         return false;
                     }
+                    Log.Post(AuxReceive, readCount, totalReceiveCount,
+                        selectedUploadBox.ContentLengthAnnounced,
+                        selectedUploadBox.UploadBytesPerSecond);
                 }
 
                 receiveParser.PushForProcessing(buffer, fillUpCount);
@@ -155,7 +170,7 @@ namespace Ziewaar.Web.UploaderServerSupport
                 // to finish
                 if (readCount == 0) break;
             }
-            receiveParser.Finish();
+            receiveParser.Finish(selectedUploadBox.Values, selectedUploadBox.Faults);
             return true;
         }
     }

@@ -11,8 +11,8 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         public static readonly DynamicPage 
             UploadForm = DynamicPage.For(
-            Path.Combine(SpecialPaths.AssemblyDirectory, "200-UploadPage.html")),
+            Path.Combine(SpecialPaths.AssemblyDirectory, "Html/200-UploadPage.html")),
             ProgressPage = DynamicPage.For(
-            Path.Combine(SpecialPaths.AssemblyDirectory, "210-ProgressPage.html"));
+            Path.Combine(SpecialPaths.AssemblyDirectory, "Html/210-ProgressPage.html"));
     }
 }

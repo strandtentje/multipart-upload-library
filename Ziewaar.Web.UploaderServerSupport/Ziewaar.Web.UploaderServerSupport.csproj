@@ -46,6 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buffers\FixedBufferPool.cs" />
+    <Compile Include="FieldResults\Finished\MultipartFinishedMultifileResult.cs" />
+    <Compile Include="FieldResults\Finished\MultipartFinishedPlainFormValue.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartFinishedResult.cs" />
+    <Compile Include="FieldResults\Finished\MultipartFinishedSingleFileResult.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartMultipleFileResult.cs" />
+    <Compile Include="Interfaces\IContentTypeValidator.cs" />
+    <Compile Include="Interfaces\IMultipartFinishedComponentResult.cs" />
     <Compile Include="Models\ByteSequenceNode.cs" />
     <Compile Include="Models\ByteSequenceNodeTag.cs" />
     <Compile Include="430-CommonMultipartComponentIngestor.cs" />
@@ -60,7 +67,7 @@
     <Compile Include="Pages\DynamicPageInstructionEnumerable.cs" />
     <Compile Include="Pages\DynamicPages.cs" />
     <Compile Include="Pages\FileText.cs" />
-    <Compile Include="Results\FormStartComponentResult.cs" />
+    <Compile Include="FieldResults\Unfinished\FormStartComponentResult.cs" />
     <Compile Include="Models\HeaderNames.cs" />
     <Compile Include="Collections\HttpHeaderCollection.cs" />
     <Compile Include="Models\HttpHeader.cs" />
@@ -79,10 +86,10 @@
     <Compile Include="Interfaces\IUploadSizeGovernor.cs" />
     <Compile Include="Buffers\FixedBuffer.cs" />
     <Compile Include="440-MultipartByteSequenceGovernor.cs" />
-    <Compile Include="Results\MultipartComponentFaultyResult.cs" />
-    <Compile Include="Results\MultipartInputFieldResult.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartComponentFaultyResult.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartInputFieldResult.cs" />
     <Compile Include="Collections\MultipartParsingPositionsCollection.cs" />
-    <Compile Include="Results\MultipartSingleFileResult.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartSingleFileResult.cs" />
     <Compile Include="Models\UploadBox.cs" />
     <Compile Include="Models\UploadBoxComparerById.cs" />
     <Compile Include="Extensions\UploadBoxExtensions.cs" />

@@ -21,6 +21,8 @@ namespace Ziewaar.Web.UploaderServerSupport
         /// <summary>
         /// Tell the parser we're finished.
         /// </summary>
-        void Finish();
+        void Finish(
+            IDictionary<string, IMultipartFinishedComponentResult> values,
+            IList<string> faults);
     }
 }

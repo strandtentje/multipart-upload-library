@@ -15,6 +15,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         public byte[] Sequence;
         public readonly bool CanEndHere;
         public readonly ByteSequenceNode[] NextOptions;
+        private readonly string StringRepresentation;
 
         public ByteSequenceNode(
             ByteSequenceNodeTag tag,
@@ -26,6 +27,13 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.Sequence = sequence;
             this.CanEndHere = canEndHere;
             this.NextOptions = nextOptions;
+            this.StringRepresentation = Encoding.ASCII.GetString(sequence);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("ByteSequenceNode({0},{1})",
+                this.Tag, this.StringRepresentation);
         }
 
         public static readonly ByteSequenceNode
@@ -41,7 +49,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         public static ByteSequenceNode WrapCrlf(ByteSequenceNode child)
         {
             return new ByteSequenceNode(
-                ByteSequenceNodeTag.StartingCrlf, DashDash, false, child);
+                ByteSequenceNodeTag.StartingCrlf, CrLf, false, child);
         }
 
         public static ByteSequenceNode CreateBoundaryTree()

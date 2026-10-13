@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestingContentTypeValidator.cs" />
     <Compile Include="TestingPlaceholderResolver.cs" />
     <Compile Include="TestingSessionSourcer.cs" />
     <Compile Include="Webserver.cs" />

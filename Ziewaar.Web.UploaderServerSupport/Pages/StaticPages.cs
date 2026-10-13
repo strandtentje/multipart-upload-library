@@ -12,19 +12,26 @@ namespace Ziewaar.Web.UploaderServerSupport
         public static readonly StaticPages Instance = new StaticPages();
         private string
             Pg100BadMethodFile =
-            Path.Combine(SpecialPaths.AssemblyDirectory, "100-BadMethod.html"),
+            Path.Combine(SpecialPaths.AssemblyDirectory, 
+            "Html/100-BadMethod.html"),
             Pg110BadGetRequestFile =
-            Path.Combine(SpecialPaths.AssemblyDirectory, "110-BadGetRequest.html"),
+            Path.Combine(SpecialPaths.AssemblyDirectory, 
+            "Html/110-BadGetRequest.html"),
             Pg120UploaderGoneFile =
-            Path.Combine(SpecialPaths.AssemblyDirectory, "120-UploaderGone.html"),
+            Path.Combine(SpecialPaths.AssemblyDirectory, 
+            "Html/120-UploaderGone.html"),
             Pg130BadGetFunctionFile =
-            Path.Combine(SpecialPaths.AssemblyDirectory, "130-BadGetFunction.html"),
+            Path.Combine(SpecialPaths.AssemblyDirectory, 
+            "Html/130-BadGetFunction.html"),
             Pg140BadUploadStartFile =
-            Path.Combine(SpecialPaths.AssemblyDirectory, "140-BadUploadStart.html"),
+            Path.Combine(SpecialPaths.AssemblyDirectory, 
+            "Html/140-BadUploadStart.html"),
             Pg150ConflictingUploadFile =
-            Path.Combine(SpecialPaths.AssemblyDirectory, "150-ConflictingUpload.html"),
+            Path.Combine(SpecialPaths.AssemblyDirectory, 
+            "Html/150-ConflictingUpload.html"),
             Pg160UploadTooBigFile =
-            Path.Combine(SpecialPaths.AssemblyDirectory, "160-UploadTooBig.html")
+            Path.Combine(SpecialPaths.AssemblyDirectory, 
+            "Html/160-UploadTooBig.html")
             ;
         public readonly byte[] Pg100BadMethod, Pg110BadGetRequest, Pg120UploaderGone,
             Pg130BadGetFunction, Pg140BadUploadStart, Pg150ConflictingUpload,

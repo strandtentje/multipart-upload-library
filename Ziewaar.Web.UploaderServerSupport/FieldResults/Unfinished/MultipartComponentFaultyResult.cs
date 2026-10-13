@@ -20,8 +20,9 @@ namespace Ziewaar.Web.UploaderServerSupport
 
         }
 
-        public void Finish()
+        public IMultipartFinishedComponentResult Finish()
         {
+            return null;
         }
 
         public void Dispose()

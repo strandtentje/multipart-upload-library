@@ -9,10 +9,9 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         private readonly string _name;
         private readonly List<byte> Data = new List<byte>();
-        private string _finishedValue;
+        private string FinishedValue;
 
         public string Name { get { return _name; } }
-        public string FinishedValue { get { return _finishedValue; } }
 
         public MultipartInputFieldResult(string name)
         {
@@ -24,10 +23,11 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.Data.AddRange(data.Skip(start).Take(length).ToArray());
         }
 
-        public void Finish()
+        public IMultipartFinishedComponentResult Finish()
         {
             var bytes = Data.ToArray();
-            _finishedValue = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            FinishedValue = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            return new MultipartFinishedPlainFormValue(this.Name, FinishedValue);
         }
 
         public string Fault
@@ -43,6 +43,11 @@ namespace Ziewaar.Web.UploaderServerSupport
         public void Dispose()
         {
 
+        }
+
+        public override string ToString()
+        {
+            return string.Format("MultipartInputFieldResult({0})", this.Name);
         }
     }
 }

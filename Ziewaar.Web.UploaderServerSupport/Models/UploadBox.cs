@@ -12,6 +12,9 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         public readonly string SessionId, TargetDirectory, UploadBoxId, TempFile;
         public readonly string[] AcceptedFields;
+        public List<string> Faults = new List<string>();
+        public SortedList<string, IMultipartFinishedComponentResult> Values = 
+            new SortedList<string, IMultipartFinishedComponentResult>();
 
         public long ContentLengthAnnounced { get; private set; }
         public long ContentLengthProgress { get; private set; }

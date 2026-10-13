@@ -16,9 +16,9 @@ namespace Ziewaar.Web.UploaderServerSupport
             this._fault = "Data before form start";
         }
 
-        public void Finish()
+        public IMultipartFinishedComponentResult Finish()
         {
-
+            return null;
         }
 
         public void Dispose()

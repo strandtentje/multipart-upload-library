@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Ejije.Logging;
 
 namespace Ziewaar.Web.UploaderServerSupport
 {
@@ -24,6 +25,9 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.Processing = processing;
             this.Inspector = inspector;
             this.Ingestor = ingestor;
+
+            this.Boundaries = new MultipartByteSequenceGovernor();
+            this.Positions = new MultipartParsingPositionsCollection();
         }
 
         public void ParserLoop(object arg)
@@ -31,7 +35,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             byte[] currentBoundary;
 
             while (!this.Inspector.IsEof && this.Ingestor.TryHaveBoundary(
-                out currentBoundary))
+                out currentBoundary) && !this.Processing.IsDisposing)
             {
                 Boundaries.Rescope(currentBoundary);
                 if (TryPushBuffers())
@@ -53,6 +57,16 @@ namespace Ziewaar.Web.UploaderServerSupport
             return true;
         }
 
+        private static readonly Log
+            FlushNoBoundary = Log.Tech(
+            "No boundaries between {start} and {end}"),
+            NoContentToFlush = Log.Warn(
+            "No content to flush, or no receptive field"),
+            BoundaryDetected = Log.Tech(
+            "Boundary detect"),
+            RemainingContent = Log.Tech(
+            "Boundary was preceeded by unflushed data");
+
         private bool ProcessNewBuffers()
         {
             ByteSequenceNodeTag tag;
@@ -63,41 +77,65 @@ namespace Ziewaar.Web.UploaderServerSupport
                     out Positions.BoundaryStart,
                     out Positions.BoundaryEnd, out tag))
                 {
+                    Log.Post(FlushNoBoundary, Positions.ConsumedUntil,
+                        this.Inspector.WindowEnd);
                     if (this.Ingestor.IsExpectingContent &&
                         Positions.ContentStart > 0)
-                        FlushWindow(
-                            Positions.ContentStart, this.Inspector.WindowEnd);
+                    {
+                        var remainderStart = Math.Max(Positions.ContentStart,
+                            Positions.Break);
+                        FlushWindow(remainderStart, this.Inspector.WindowEnd);
+                    }
+                    else
+                    {
+                        Log.Post(NoContentToFlush);
+                    }
                     Positions.Break = this.Inspector.WindowEnd;
                     Boundaries.WithCrlf();
-                    continue;
                 }
                 else
                 {
+                    Log.Post(BoundaryDetected);
                     Positions.ContentEnd = Positions.BoundaryStart;
+                    if (this.Ingestor.IsExpectingContent &&
+                        Positions.ContentStart > 0)
+                    {
+                        Log.Post(RemainingContent);
+                        var remainderStart = Math.Max(Positions.ContentStart,
+                            Positions.Break);
+                        FlushWindow(remainderStart, Positions.ContentEnd);
+                    }
+
+                    if (!ProcessBoundary(tag))
+                        return false;
                 }
-
-                if (this.Ingestor.IsExpectingContent &&
-                    Positions.ContentStart > 0)
-                    FlushWindow(Positions.ContentStart, Positions.ContentEnd);
-
-                if (!ProcessBoundary(tag))
-                    return false;
             }
             return true;
         }
+
+        private static readonly Log
+            ClosingBoundary = Log.Tech("Closing {boundary} detected"),
+            OpeningHeaders = Log.Tech("Header announcement detected"),
+            HeadersRead = Log.Tech("Multipart Headers {read}");
 
         private bool ProcessBoundary(ByteSequenceNodeTag tag)
         {
             switch (tag)
             {
                 case ByteSequenceNodeTag.DashDashBoundaryDashDash:
-                    this.Ingestor.RetireBoundary();
+                    Log.Post(ClosingBoundary, this.Boundaries.BoundaryTree);
+                    if (!this.Ingestor.TryRetireBoundary())
+                    {
+                        Fault = "Closing boundary while there was no boundary";
+                        return false;
+                    }
                     Boundaries.WithoutCrlf();
                     Positions.ContentStart = 0;
                     break;
 
                 case ByteSequenceNodeTag.DashDashBoundaryCrLf:
-                    Positions.HeaderEnd = Positions.BoundaryEnd;
+                    Log.Post(OpeningHeaders);
+                    Positions.HeaderStart = Positions.BoundaryEnd;
                     if (!this.Inspector.IndexOf(
                         ByteSequenceNode.DoubleCrlf, Positions.HeaderStart,
                         out Positions.HeaderEnd, out Positions.ContentStart, out tag) ||
@@ -109,15 +147,20 @@ namespace Ziewaar.Web.UploaderServerSupport
                             Positions.BoundaryEnd);
                         return false;
                     }
-                    else if (this.Ingestor.GiveHeaderString(this.Inspector.ExtractString(
-                            Positions.HeaderStart, Positions.HeaderEnd)))
-                    {
-                        Boundaries.WithCrlf();
-                    }
                     else
                     {
-                        Fault = string.Format("Ingestor failed at; {0}",
-                            Positions.ConsumedUntil);
+                        var headerString = this.Inspector.ExtractString(
+                            Positions.HeaderStart, Positions.HeaderEnd);
+                        Log.Post(HeadersRead, headerString);
+                        if (this.Ingestor.GiveHeaderString(headerString))
+                        {
+                            Boundaries.WithCrlf();
+                        }
+                        else
+                        {
+                            Fault = string.Format("Ingestor failed at; {0}",
+                                Positions.ConsumedUntil);
+                        }
                     }
 
                     break;

@@ -83,17 +83,26 @@ namespace Ziewaar.Web.UploaderServerSupport
             out long resultEndAt,
             out ByteSequenceNodeTag tag)
         {
-            resultStartAt = this.IndexOf(optionTree.Sequence, startAt);
-            if (resultStartAt < 0)
+            for (; startAt < this.WindowEnd; startAt++)
             {
-                resultEndAt = -1;
-                tag = optionTree.Tag;
-                return false;
+                resultStartAt = this.IndexOf(optionTree.Sequence, startAt);
+                if (resultStartAt < 0)
+                {
+                    resultEndAt = -1;
+                    tag = optionTree.Tag;
+                    return false;
+                }
+                else
+                {
+                    if (StartsWith(optionTree, resultStartAt, out resultEndAt, out tag))
+                        return true;
+                }
+                startAt = resultStartAt;
             }
-            else
-            {
-                return StartsWith(optionTree, resultStartAt, out resultEndAt, out tag);
-            }
+            resultStartAt = -1;
+            resultEndAt = -1;
+            tag = optionTree.Tag;
+            return false;
         }
 
         /// <summary>
@@ -277,7 +286,9 @@ namespace Ziewaar.Web.UploaderServerSupport
                     "this part of the inspection window is out of view");
             if (virtualStart < Window.Count)
             {
-                var result = Array.IndexOf(Window.Allocation, b, virtualStart, Window.Count);
+                var result = Array.IndexOf(
+                    Window.Allocation, b, virtualStart, 
+                    Window.Count - virtualStart);
                 if (result >= virtualStart)
                     return WindowOffset + result;
             }
@@ -299,11 +310,12 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             StringBuilder sbl = new StringBuilder();
             var virtualPosition = byteStart - WindowOffset;
-            var requestedCount = byteEnd - byteStart;
+            var initiallyRequestedCount = byteEnd - byteStart;
+            var remainingCount = initiallyRequestedCount;
             if (virtualPosition < 0)
                 throw new ArgumentOutOfRangeException(
                     "Start position is out of view");
-            if (requestedCount < 0)
+            if (initiallyRequestedCount < 0)
                 throw new ArgumentOutOfRangeException(
                     "Start position cannot come after end position");
             if (byteEnd >= (WindowOffset + Window.Count + Peek.Count))
@@ -313,7 +325,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             {
                 // we take what we can from the Window
                 var availableCount = Math.Min(
-                    this.Window.Count - virtualPosition, requestedCount);
+                    this.Window.Count - virtualPosition, remainingCount);
                 // this must be at most the requested count, 
                 // and that cannot exceed the Window size minus the 
                 // seek position.
@@ -324,17 +336,17 @@ namespace Ziewaar.Web.UploaderServerSupport
                 // what we managed to take, we subtract from the 
                 // requestedCount so that we know what remainder
                 // (if any) we need to pull from the Peek buffer.
-                requestedCount -= availableCount;
+                remainingCount -= availableCount;
             }
 
             virtualPosition -= this.Window.Count;
-            virtualPosition = Math.Min(virtualPosition, 0);
+            virtualPosition = Math.Max(virtualPosition, 0);
 
             if (virtualPosition < this.Peek.Count)
             {
                 // we take what we need to (and can) from the Peek.
                 var availableCount = Math.Min(
-                    this.Peek.Count - virtualPosition, requestedCount);
+                    this.Peek.Count - virtualPosition, remainingCount);
                 // this must be at most the requestedCount (which 
                 // may have become less because we read from the 
                 // Window already), and it cannot exceed Peek size minus
@@ -348,7 +360,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             // theoretically, this assertion gets caught earlier
             // as an ArgumentException, it's however a great canary
             // in case of programmer error.
-            if (requestedCount != sbl.Length)
+            if (initiallyRequestedCount != sbl.Length)
                 throw new InvalidOperationException(
                     "Extracted string had a different amount of data " +
                     "than the range specified with byteStart/byteEnd");

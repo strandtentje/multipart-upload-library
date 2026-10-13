@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Ejije.Logging;
 
 namespace Ziewaar.Web.UploaderServerSupport
 {
@@ -40,9 +41,11 @@ namespace Ziewaar.Web.UploaderServerSupport
             byte[] result;
             int count;
             while (!Receiving.TryDequeue(out result, out count))
+            {
                 if (IsDisposing)
                     throw new ObjectDisposedException(
                         "CommonMultipartUploadParser");
+            }
             return result;
         }
 
@@ -54,12 +57,14 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.Processing.Enqueue(receivedBuffer, count);
         }
 
-        public void Finish()
+        public void Finish(
+            IDictionary<string, IMultipartFinishedComponentResult> values,
+            IList<string> faults)
         {
             this.Processing.Enqueue(FixedBuffer.Null.Allocation, 0);
             this.Processing.Enqueue(FixedBuffer.Null.Allocation, 0);
             this.WorkerThread.Join();
-            this.Ingestor.Finish();
+            this.Ingestor.Finish(values, faults);
         }
 
         public void Dispose()
@@ -71,7 +76,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             }
             finally
             {
-                this.Ingestor.Clean();
+                this.Ingestor.Dispose();
             }
         }
     }
