@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Ziewaar.Web.UploaderServerSupport</RootNamespace>
+    <AssemblyName>Ziewaar.Web.UploaderServerSupport</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Buffers\FixedBufferPool.cs" />
+    <Compile Include="FieldResults\Finished\MultipartFinishedMultifileResult.cs" />
+    <Compile Include="FieldResults\Finished\MultipartFinishedPlainFormValue.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartFinishedResult.cs" />
+    <Compile Include="FieldResults\Finished\MultipartFinishedSingleFileResult.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartMultipleFileResult.cs" />
+    <Compile Include="Interfaces\IContentTypeValidator.cs" />
+    <Compile Include="Interfaces\IMultipartFinishedComponentResult.cs" />
+    <Compile Include="Models\ByteSequenceNode.cs" />
+    <Compile Include="Models\ByteSequenceNodeTag.cs" />
+    <Compile Include="430-CommonMultipartComponentIngestor.cs" />
+    <Compile Include="420-CommonMultipartUploadParserWorker.cs" />
+    <Compile Include="Collections\DataRateCollection.cs" />
+    <Compile Include="410-CommonMultipartUploadParser.cs" />
+    <Compile Include="400-CommonMultipartUploadParserFactory.cs" />
+    <Compile Include="300-CommonUploadReceiver.cs" />
+    <Compile Include="310-CommonUploadSizeGovernor.cs" />
+    <Compile Include="Pages\DynamicPage.cs" />
+    <Compile Include="Pages\DynamicPageInstruction.cs" />
+    <Compile Include="Pages\DynamicPageInstructionEnumerable.cs" />
+    <Compile Include="Pages\DynamicPages.cs" />
+    <Compile Include="Pages\FileText.cs" />
+    <Compile Include="FieldResults\Unfinished\FormStartComponentResult.cs" />
+    <Compile Include="Models\HeaderNames.cs" />
+    <Compile Include="Collections\HttpHeaderCollection.cs" />
+    <Compile Include="Models\HttpHeader.cs" />
+    <Compile Include="Extensions\HttpHeaderCollectionExtensions.cs" />
+    <Compile Include="Extensions\HttpHeaderExtensions.cs" />
+    <Compile Include="Models\HttpHeaderProperty.cs" />
+    <Compile Include="Extensions\HttpResponseExtensions.cs" />
+    <Compile Include="Interfaces\IMultipartComponentIngestor.cs" />
+    <Compile Include="Interfaces\IMultipartComponentResult.cs" />
+    <Compile Include="Interfaces\IMultipartUploadParser.cs" />
+    <Compile Include="Interfaces\IMultipartUploadParserFactory.cs" />
+    <Compile Include="Interfaces\IPlaceholderResolver.cs" />
+    <Compile Include="Interfaces\IProgressGrapher.cs" />
+    <Compile Include="Interfaces\ISessionSourcer.cs" />
+    <Compile Include="Interfaces\IUploadReceiver.cs" />
+    <Compile Include="Interfaces\IUploadSizeGovernor.cs" />
+    <Compile Include="Buffers\FixedBuffer.cs" />
+    <Compile Include="440-MultipartByteSequenceGovernor.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartComponentFaultyResult.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartInputFieldResult.cs" />
+    <Compile Include="Collections\MultipartParsingPositionsCollection.cs" />
+    <Compile Include="FieldResults\Unfinished\MultipartSingleFileResult.cs" />
+    <Compile Include="Models\UploadBox.cs" />
+    <Compile Include="Models\UploadBoxComparerById.cs" />
+    <Compile Include="Extensions\UploadBoxExtensions.cs" />
+    <Compile Include="200-UploadBoxRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pages\StaticPages.cs" />
+    <Compile Include="Pages\UploadBoxSpecificResolver.cs" />
+    <Compile Include="100-UploadRouter.cs" />
+    <Compile Include="Models\UploadStage.cs" />
+    <Compile Include="Buffers\VirtualInspectionBuffer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Html\100-BadMethod.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\110-BadGetRequest.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\120-UploaderGone.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\200-UploadPage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\130-BadGetFunction.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\140-BadUploadStart.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\150-ConflictingUpload.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\210-ProgressPage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\160-UploadTooBig.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UniversalDSPLink\Ejije.Logging\Ejije.Logging.csproj">
+      <Project>{0CB05122-16A7-4F36-B906-C59CC4D5F10C}</Project>
+      <Name>Ejije.Logging</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
