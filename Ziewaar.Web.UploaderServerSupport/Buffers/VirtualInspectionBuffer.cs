@@ -22,15 +22,12 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         private FixedBuffer Window = FixedBuffer.Null;
         private FixedBuffer Peek = FixedBuffer.Null;
-        /// <summary>
-        /// Inclusive starting position of window in view;
-        /// </summary>
-        public long WindowOffset { get; private set; }
+        public long WindowOffsetRO;
         /// <summary>
         /// Exclusive ending position of the window in view.
         /// </summary>
-        public long WindowEnd { get { return WindowOffset + Window.Count; } }
-        public long PeekEnd { get { return WindowOffset + Window.Count + Peek.Count; } }
+        public long WindowEndRO;
+        public long PeekEndRO;
         /// <summary>
         /// Buffer currently in view.
         /// </summary>
@@ -47,10 +44,15 @@ namespace Ziewaar.Web.UploaderServerSupport
         /// and can be re-used.</returns>
         public byte[] Push(byte[] buffer, int count)
         {
-            WindowOffset += Window.Count;
+            WindowOffsetRO += Window.Count;
+
             var retiree = Window;
             Window = Peek;
             Peek = new FixedBuffer(buffer, count);
+
+            WindowEndRO = WindowOffsetRO + Window.Count;
+            PeekEndRO = WindowOffsetRO + Window.Count + Peek.Count;
+
             return retiree.Allocation;
         }
 
@@ -83,7 +85,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             out long resultEndAt,
             out ByteSequenceNodeTag tag)
         {
-            for (var startAt = initiallyStartAt; startAt < this.WindowEnd; startAt++)
+            for (var startAt = initiallyStartAt; startAt < this.WindowEndRO; startAt++)
             {
                 resultStartAt = this.IndexOf(optionTree.Sequence, startAt);
                 if (resultStartAt < 0)
@@ -158,12 +160,12 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             if (sequence.Length == 0)
                 throw new ArgumentOutOfRangeException("cannot find empty thing");
-            else if (initiallyStartAt < WindowOffset)
+            else if (initiallyStartAt < WindowOffsetRO)
                 throw new ArgumentOutOfRangeException("startAt below window offset");
-            else if (initiallyStartAt >= WindowEnd)
+            else if (initiallyStartAt >= WindowEndRO)
                 throw new ArgumentOutOfRangeException("startAt above window");
 
-            for (var startAt = initiallyStartAt; startAt < WindowEnd; startAt++)
+            for (var startAt = initiallyStartAt; startAt < WindowEndRO; startAt++)
             {
                 var firstCharacterMatchStartsAt = this.IndexOf(sequence[0], startAt);
                 if (firstCharacterMatchStartsAt < 0)
@@ -191,11 +193,13 @@ namespace Ziewaar.Web.UploaderServerSupport
             int sequencePosition;
             for (sequencePosition = 0;
                 sequencePosition < sequence.Length &&
-                (startAt + sequencePosition) < PeekEnd &&
+                (startAt + sequencePosition) < PeekEndRO &&
                 this[startAt + sequencePosition] == sequence[sequencePosition];
                 sequencePosition++) ;
             return sequencePosition == sequence.Length;
         }
+
+        private long _indexerVirtualPosition;
 
         /// <summary>
         /// Retrieve a single byte from the inspection buffer, relative
@@ -209,22 +213,14 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             get
             {
-                var virtualPosition = position - WindowOffset;
-                if (virtualPosition < 0)
-                    throw new ArgumentOutOfRangeException(
-                        "this part of the inspection window is out of view");
-                if (virtualPosition < Window.Count)
-                    return Window.Allocation[virtualPosition];
-                virtualPosition -= Window.Count;
-                // below assertion can't happen because we just established
-                // that virtualPosition has at least passed the end of Window. 
-                if (virtualPosition < 0)
-                    throw new ArgumentOutOfRangeException(
-                        "this part of the inspection window is out of view");
-                if (virtualPosition < Peek.Count)
-                    return Peek.Allocation[virtualPosition];
-                throw new ArgumentOutOfRangeException(
-                    "this part of the inspection window is out of view");
+                _indexerVirtualPosition = position - WindowOffsetRO;
+
+                if (_indexerVirtualPosition < Window.Count)
+                    return Window.Allocation[_indexerVirtualPosition];
+
+                _indexerVirtualPosition -= Window.Count;
+
+                return Peek.Allocation[_indexerVirtualPosition];
             }
         }
 
@@ -241,7 +237,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             if (Window == FixedBuffer.Null)
                 return -1;
-            var virtualStart = (int)(startAt - WindowOffset);
+            var virtualStart = (int)(startAt - WindowOffsetRO);
             if (virtualStart < 0)
                 throw new ArgumentOutOfRangeException(
                     "this part of the inspection window is out of view");
@@ -249,7 +245,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             {
                 var result = Array.IndexOf(Window.Allocation, b, virtualStart, Window.Count);
                 if (result >= virtualStart)
-                    return WindowOffset + result;
+                    return WindowOffsetRO + result;
             }
             if (Peek == FixedBuffer.Null)
                 return -1;
@@ -265,7 +261,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             {
                 var result = Array.IndexOf(Peek.Allocation, b, virtualStart, Peek.Count);
                 if (result >= virtualStart)
-                    return WindowOffset + Window.Count + result;
+                    return WindowOffsetRO + Window.Count + result;
             }
             return -1;
         }
@@ -284,7 +280,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             if (Window == FixedBuffer.Null)
                 return -1;
-            var virtualStart = (int)(startAt - WindowOffset);
+            var virtualStart = (int)(startAt - WindowOffsetRO);
             if (virtualStart < 0)
                 throw new ArgumentOutOfRangeException(
                     "this part of the inspection window has passed");
@@ -298,7 +294,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             if (result < 0)
                 return -1;
 
-            return WindowOffset + result;
+            return WindowOffsetRO + result;
         }
 
         /// <summary>
@@ -315,7 +311,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         public string ExtractString(long byteStart, long byteEnd)
         {
             StringBuilder sbl = new StringBuilder();
-            var virtualPosition = byteStart - WindowOffset;
+            var virtualPosition = byteStart - WindowOffsetRO;
             var initiallyRequestedCount = byteEnd - byteStart;
             var remainingCount = initiallyRequestedCount;
             if (virtualPosition < 0)
@@ -324,7 +320,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             if (initiallyRequestedCount < 0)
                 throw new ArgumentOutOfRangeException(
                     "Start position cannot come after end position");
-            if (byteEnd >= (WindowOffset + Window.Count + Peek.Count))
+            if (byteEnd >= (WindowOffsetRO + Window.Count + Peek.Count))
                 throw new ArgumentOutOfRangeException(
                     "End position is out of view");
             if (virtualPosition < this.Window.Count)

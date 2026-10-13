@@ -6,6 +6,7 @@ using System.Net;
 using Ejije.Logging;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace Ziewaar.Web.UploaderServerSupport
 {
@@ -13,12 +14,15 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         private readonly IUploadSizeGovernor SizeGovernor;
         private readonly IMultipartUploadParserFactory ParserFactory;
+        private readonly ITransferRateConstraints TransferRateConstraints;
         public CommonUploadReceiver(
-            IUploadSizeGovernor sizeGovernor, 
-            IMultipartUploadParserFactory parserFactory)
+            IUploadSizeGovernor sizeGovernor,
+            IMultipartUploadParserFactory parserFactory,
+            ITransferRateConstraints transferRateConstraints)
         {
             this.SizeGovernor = sizeGovernor;
             this.ParserFactory = parserFactory;
+            this.TransferRateConstraints = transferRateConstraints;
         }
         private static readonly Log
             ValidatedUpload = Log.Tech(
@@ -112,7 +116,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
 
             byte[] buffer;
-            int totalReceiveCount = 0;
+            long totalReceiveCount = 0;
             var dataRate = new DataRateCollection(7);
 
             for (int readCount = req.InputStream.Read(
@@ -169,6 +173,9 @@ namespace Ziewaar.Web.UploaderServerSupport
                 // eof. then we shouldn't read again and skip
                 // to finish
                 if (readCount == 0) break;
+
+                if (this.TransferRateConstraints.Sleep >= 0)
+                    Thread.Sleep(this.TransferRateConstraints.Sleep);
             }
             receiveParser.Finish(selectedUploadBox.Values, selectedUploadBox.Faults);
             selectedUploadBox.TrySetStopMessage(string.Format(

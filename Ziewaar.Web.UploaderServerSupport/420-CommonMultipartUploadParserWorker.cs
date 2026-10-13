@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Ejije.Logging;
 
 namespace Ziewaar.Web.UploaderServerSupport
@@ -11,6 +12,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         private readonly FixedBufferPool Receiving, Processing;
         private readonly VirtualInspectionBuffer Inspector;
         private readonly IMultipartComponentIngestor Ingestor;
+        private readonly int Sleep;
         private readonly MultipartByteSequenceGovernor Boundaries;
         private readonly MultipartParsingPositionsCollection Positions;
         public bool IsDisposing { get; private set; }
@@ -19,27 +21,37 @@ namespace Ziewaar.Web.UploaderServerSupport
         public CommonMultipartUploadParserWorker(
             FixedBufferPool receiving, FixedBufferPool processing,
             VirtualInspectionBuffer inspector,
-            IMultipartComponentIngestor ingestor)
+            IMultipartComponentIngestor ingestor, int sleep)
         {
             this.Receiving = receiving;
             this.Processing = processing;
             this.Inspector = inspector;
             this.Ingestor = ingestor;
+            this.Sleep = sleep;
 
             this.Boundaries = new MultipartByteSequenceGovernor();
             this.Positions = new MultipartParsingPositionsCollection();
         }
-
+        private static readonly Log UploadFail = Log.Fail(
+            "Uploaded failed due to {exception}");
         public void ParserLoop(object arg)
         {
             byte[] currentBoundary;
 
-            while (!this.Inspector.IsEof && this.Ingestor.TryHaveBoundary(
-                out currentBoundary) && !this.Processing.IsDisposing)
+            try
             {
-                Boundaries.Rescope(currentBoundary);
-                if (TryPushBuffers())
-                    ProcessNewBuffers();
+                while (!this.Inspector.IsEof && this.Ingestor.TryHaveBoundary(
+                    out currentBoundary) && !this.Processing.IsDisposing)
+                {
+                    Boundaries.Rescope(currentBoundary);
+                    if (TryPushBuffers())
+                        ProcessNewBuffers();
+                }
+            }
+            catch (Exception ex)
+            {
+                Fault = "Upload failure";
+                Log.Post(UploadFail, ex);
             }
         }
 
@@ -69,8 +81,10 @@ namespace Ziewaar.Web.UploaderServerSupport
 
         private bool ProcessNewBuffers()
         {
+            if (Sleep >= 0)
+                Thread.Sleep(Sleep);
             ByteSequenceNodeTag tag;
-            while (Positions.ConsumedUntil < this.Inspector.WindowEnd)
+            while (Positions.ConsumedUntil < this.Inspector.WindowEndRO)
             {
                 if (!this.Inspector.IndexOf(Boundaries.Current,
                     Positions.ConsumedUntil,
@@ -78,19 +92,19 @@ namespace Ziewaar.Web.UploaderServerSupport
                     out Positions.BoundaryEnd, out tag))
                 {
                     Log.Post(FlushNoBoundary, Positions.ConsumedUntil,
-                        this.Inspector.WindowEnd);
+                        this.Inspector.WindowEndRO);
                     if (this.Ingestor.IsExpectingContent &&
                         Positions.ContentStart > 0)
                     {
                         var remainderStart = Math.Max(Positions.ContentStart,
                             Positions.Break);
-                        FlushWindow(remainderStart, this.Inspector.WindowEnd);
+                        FlushWindow(remainderStart, this.Inspector.WindowEndRO);
                     }
                     else
                     {
                         Log.Post(NoContentToFlush);
                     }
-                    Positions.Break = this.Inspector.WindowEnd;
+                    Positions.Break = this.Inspector.WindowEndRO;
                     Boundaries.WithCrlf();
                 }
                 else
@@ -176,9 +190,9 @@ namespace Ziewaar.Web.UploaderServerSupport
 
         private void FlushWindow(long contentStart, long contentEnd)
         {
-            var readingWindowDataStart = contentStart - this.Inspector.WindowOffset;
+            var readingWindowDataStart = contentStart - this.Inspector.WindowOffsetRO;
             readingWindowDataStart = Math.Max(0, readingWindowDataStart);
-            var readingWindowDataEnd = contentEnd - this.Inspector.WindowOffset;
+            var readingWindowDataEnd = contentEnd - this.Inspector.WindowOffsetRO;
             var readingWindowDataCount =
                 readingWindowDataEnd - readingWindowDataStart;
 

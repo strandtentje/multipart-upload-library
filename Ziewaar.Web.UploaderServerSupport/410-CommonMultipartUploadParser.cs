@@ -20,7 +20,7 @@ namespace Ziewaar.Web.UploaderServerSupport
 
         public CommonMultipartUploadParser(
             FixedBufferPool forReceiving, FixedBufferPool forProcessing,
-            IMultipartComponentIngestor ingestor)
+            IMultipartComponentIngestor ingestor, int sleep)
         {
             this.Receiving = forReceiving;
             this.Processing = forProcessing;
@@ -28,7 +28,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.Inspector = new VirtualInspectionBuffer();
             this.Worker = new CommonMultipartUploadParserWorker(
                 this.Receiving, this.Processing,
-                this.Inspector, this.Ingestor);
+                this.Inspector, this.Ingestor, sleep);
             this.WorkerThread = new Thread(this.Worker.ParserLoop);
             this.WorkerThread.Priority = ThreadPriority.BelowNormal;            
             this.WorkerThread.Start(null);

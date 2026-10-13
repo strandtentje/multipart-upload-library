@@ -58,6 +58,7 @@
     <Compile Include="TestingContentTypeValidator.cs" />
     <Compile Include="TestingPlaceholderResolver.cs" />
     <Compile Include="TestingSessionSourcer.cs" />
+    <Compile Include="TestingTransferRateConstraints.cs" />
     <Compile Include="Webserver.cs" />
     <Compile Include="WebserverEvent.cs" />
   </ItemGroup>

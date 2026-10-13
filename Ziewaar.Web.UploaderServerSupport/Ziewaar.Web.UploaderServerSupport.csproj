@@ -61,6 +61,7 @@
     <Compile Include="FieldResults\Unfinished\MultipartMultipleFileResult.cs" />
     <Compile Include="Interfaces\IContentTypeValidator.cs" />
     <Compile Include="Interfaces\IMultipartFinishedComponentResult.cs" />
+    <Compile Include="Interfaces\ITransferRateConstraints.cs" />
     <Compile Include="Models\ByteSequenceNode.cs" />
     <Compile Include="Models\ByteSequenceNodeTag.cs" />
     <Compile Include="430-CommonMultipartComponentIngestor.cs" />

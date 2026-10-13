@@ -64,7 +64,7 @@ namespace Ziewaar.Web.UploaderServerSupport
                 rsp.WriteUtf8Bytes(400, StaticPages.Instance.Pg110BadGetRequest);
                 return false;
             }
-            else if (!UploadBoxes.TryPeek(sessionId, uploadBoxId, 
+            else if (!UploadBoxes.TryPeek(sessionId, uploadBoxId,
                 out selectedUploadBox))
             {
                 rsp.WriteUtf8Bytes(410, StaticPages.Instance.Pg120UploaderGone);
@@ -77,11 +77,14 @@ namespace Ziewaar.Web.UploaderServerSupport
             }
         }
 
+        private static readonly Log GrapherFail = Log.Fail(
+            "Grapher {exception}");
+
         private void RouteGet(HttpListenerRequest req, HttpListenerResponse rsp)
         {
             string functionId;
             UploadBox selectedUploadBox;
-            if (!ValidateUploadFunction(req, rsp, out functionId, 
+            if (!ValidateUploadFunction(req, rsp, out functionId,
                 out selectedUploadBox))
                 return;
 
@@ -102,7 +105,14 @@ namespace Ziewaar.Web.UploaderServerSupport
                     }
                     break;
                 case "PROGRESS":
-                    this.ProgressGrapher.Run(selectedUploadBox, rsp);
+                    try
+                    {
+                        this.ProgressGrapher.Run(selectedUploadBox, rsp);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Post(GrapherFail, ex);
+                    }
                     break;
                 case "COMBO":
                     var placeHolders2 = new UploadBoxSpecificResolver(
@@ -112,7 +122,7 @@ namespace Ziewaar.Web.UploaderServerSupport
 
                     break;
                 default:
-                    rsp.WriteUtf8Bytes(400, 
+                    rsp.WriteUtf8Bytes(400,
                         StaticPages.Instance.Pg130BadGetFunction);
                     break;
             }
@@ -121,7 +131,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         {
             string functionId;
             UploadBox selectedUploadBox;
-            if (!ValidateUploadFunction(req, rsp, out functionId, 
+            if (!ValidateUploadFunction(req, rsp, out functionId,
                 out selectedUploadBox))
                 return;
 

@@ -24,16 +24,18 @@ namespace Ziewaar.Web.UploadServer
             Log.Start();
 
             BoxRepository = new UploadBoxRepository();
+            var txConstraints = new TestingTransferRateConstraints();
             Router = new UploadRouter(
                 new TestingSessionSourcer(),
                 new TestingPlaceholderResolver(),
                 new GdiProgressGrapher.GdiProgressGrapher(256, 32),
                 new CommonUploadReceiver(
                     new CommonUploadSizeGovernor(
-                        8 * CommonUploadSizeGovernor.GB,
+                        20 * CommonUploadSizeGovernor.GB,
                         60 * CommonUploadSizeGovernor.GB), 
                     new CommonMultipartUploadParserFactory(
-                        new TestingContentTypeValidator())),
+                        new TestingContentTypeValidator(),
+                        txConstraints), txConstraints),
                 BoxRepository);
 
             ConsoleLogWriter.IsTechIgnored = true;
