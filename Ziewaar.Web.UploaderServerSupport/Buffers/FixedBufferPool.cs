@@ -16,8 +16,7 @@ namespace Ziewaar.Web.UploaderServerSupport
         private readonly Semaphore UnderrunGuard, OverrunGuard;
         private readonly object QueueLock = new object();
 
-        public FixedBufferPool(int capacity, int dataRateResolution,
-            params byte[][] allocatedBuffers)
+        public FixedBufferPool(int capacity, params byte[][] allocatedBuffers)
         {
             this.Capacity = capacity;
             this.UnderrunGuard = new Semaphore(0, capacity);
@@ -43,12 +42,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             {
                 AllocatedArrays.Add(new byte[bufferSize]);
             }
-            return new FixedBufferPool(capacity, 0, AllocatedArrays.ToArray());
-        }
-
-        public static FixedBufferPool CreateMeasuring(int capacity)
-        {
-            return new FixedBufferPool(capacity, capacity);
+            return new FixedBufferPool(capacity, AllocatedArrays.ToArray());
         }
 
         public int Enqueue(byte[] buffer, int count)

@@ -120,8 +120,8 @@ namespace Ziewaar.Web.GdiProgressGrapher
                 gfx.FillRectangle(Bar, 0, 0, Width, Height);
 
                 textSize = gfx.MeasureString(message, ProgressFont);
-                textX = ((float)Width / 2f) - (float)textSize.Width;
-                textY = ((float)Height / 2f) - (float)textSize.Height;
+                textX = ((float)Width / 2f) - (float)textSize.Width / 2f;
+                textY = ((float)Height / 2f) - (float)textSize.Height / 2f;
 
                 gfx.DrawString(message, ProgressFont, Text, textX, textY);
                 gfx.Flush(FlushIntention.Sync);

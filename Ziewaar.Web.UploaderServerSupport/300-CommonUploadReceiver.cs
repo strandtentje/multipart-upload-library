@@ -171,6 +171,8 @@ namespace Ziewaar.Web.UploaderServerSupport
                 if (readCount == 0) break;
             }
             receiveParser.Finish(selectedUploadBox.Values, selectedUploadBox.Faults);
+            selectedUploadBox.TrySetStopMessage(string.Format(
+                "Done with {0} errors", selectedUploadBox.Faults.Count));
             return true;
         }
     }

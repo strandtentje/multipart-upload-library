@@ -11,7 +11,7 @@ namespace Ziewaar.Web.UploaderServerSupport
     {
         private int InCursor;
         private readonly long[] ByteCounts, TickCounts;
-        private long LowStamp, HighStamp, DataMoved, TicksSpent;
+        private long LowStamp, HighStamp, HighData, LowData, TicksSpent, DataMoved;
         private int WorkingIndex, NaiveIndex;
 
         public DataRateCollection(int resolution)
@@ -37,7 +37,8 @@ namespace Ziewaar.Web.UploaderServerSupport
 
                 LowStamp = long.MaxValue;
                 HighStamp = 0;
-                DataMoved = 0;
+                LowData = long.MaxValue;
+                HighData = 0;
                 for (NaiveIndex = InCursor; 
                     NaiveIndex < InCursor + ByteCounts.Length; NaiveIndex++)
                 {
@@ -47,9 +48,13 @@ namespace Ziewaar.Web.UploaderServerSupport
                     LowStamp = Math.Min(LowStamp, TickCounts[WorkingIndex]);
                     HighStamp = Math.Max(HighStamp, TickCounts[WorkingIndex]);
                     if (WorkingIndex != InCursor)
-                        DataMoved += ByteCounts[WorkingIndex];
+                    {
+                        LowData = Math.Min(LowData, ByteCounts[WorkingIndex]);
+                        HighData = Math.Max(HighData, ByteCounts[WorkingIndex]);
+                    }
                 }
                 TicksSpent = Math.Max(1, HighStamp - LowStamp);
+                DataMoved = Math.Max(1, HighData - LowData);
                 return (DataMoved * Stopwatch.Frequency) / TicksSpent;
             }
             else

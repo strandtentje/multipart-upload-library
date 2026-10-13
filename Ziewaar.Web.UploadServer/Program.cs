@@ -26,7 +26,7 @@ namespace Ziewaar.Web.UploadServer
             Router = new UploadRouter(
                 new TestingSessionSourcer(),
                 new TestingPlaceholderResolver(),
-                new GdiProgressGrapher.GdiProgressGrapher(150, 32),
+                new GdiProgressGrapher.GdiProgressGrapher(256, 32),
                 new CommonUploadReceiver(
                     new CommonUploadSizeGovernor(
                         8 * CommonUploadSizeGovernor.GB,
@@ -34,6 +34,8 @@ namespace Ziewaar.Web.UploadServer
                     new CommonMultipartUploadParserFactory(
                         new TestingContentTypeValidator())),
                 BoxRepository);
+
+            Log.IsTechMuted = true;
 
             using (var server = new Webserver("http://+:8243/"))
             {
