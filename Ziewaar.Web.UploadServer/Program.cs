@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using Ejije.Logging;
 using Ziewaar.Web.UploaderServerSupport;
 using Ziewaar.Web.GdiProgressGrapher;
 using System.Diagnostics;
+using Ejije.Logging;
+using Ziewaar.TtLog.Writers;
 
 namespace Ziewaar.Web.UploadServer
 {
@@ -15,13 +13,16 @@ namespace Ziewaar.Web.UploadServer
         private const string BROWSER_EXE = @"D:\mypal-78.0.2.en-US.win32\mypal\mypal.exe";
         private static readonly Log
             UnknownCommand =
-            Log.Shit("Unknown command; I understand: `quit`, `nb`"),
+            Log.Oops("Unknown command; I understand: `quit`, `nb`"),
             NewBoxId =
             Log.Cool("New {uploadboxid}");
         private static UploadRouter Router;
         private static UploadBoxRepository BoxRepository;
         static void Main(string[] args)
         {
+            Log.IsTechHardMuted = true;
+            Log.Start();
+
             BoxRepository = new UploadBoxRepository();
             Router = new UploadRouter(
                 new TestingSessionSourcer(),
@@ -35,7 +36,7 @@ namespace Ziewaar.Web.UploadServer
                         new TestingContentTypeValidator())),
                 BoxRepository);
 
-            Log.IsTechMuted = true;
+            ConsoleLogWriter.IsTechIgnored = true;
 
             using (var server = new Webserver("http://+:8243/"))
             {
@@ -63,7 +64,7 @@ namespace Ziewaar.Web.UploadServer
                                 "http://{0}/?uploadBoxId={1}&functionId=COMBO",
                                 "localhost:8243", nbx.UploadBoxId);
                             Log.Post(NewBoxId, nbx.UploadBoxId);
-                            Process.Start(BROWSER_EXE, nburl);
+                            Process.Start(/*BROWSER_EXE, */nburl);
                             break;
                         default:
                             Log.Post(UnknownCommand);

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,8 +10,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Ziewaar.Web.UploadServer</RootNamespace>
     <AssemblyName>Ziewaar.Web.UploadServer</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +27,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,9 +62,9 @@
     <Compile Include="WebserverEvent.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UniversalDSPLink\Ejije.Logging\Ejije.Logging.csproj">
-      <Project>{0CB05122-16A7-4F36-B906-C59CC4D5F10C}</Project>
-      <Name>Ejije.Logging</Name>
+    <ProjectReference Include="..\..\..\sources\Define.Content.AutomationKioskShell\Ziewaar.RAD.Doodads\ttlog\Ziewaar.TtLog\Ziewaar.TtLog.csproj">
+      <Project>{2342b8fb-b8a5-169b-84bd-bb8e0d44682b}</Project>
+      <Name>Ziewaar.TtLog</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ziewaar.Web.GdiProgressGrapher\Ziewaar.Web.GdiProgressGrapher.csproj">
       <Project>{4C2F19E8-C9DA-4408-9D9F-689E5BBE4F2C}</Project>
@@ -66,6 +74,9 @@
       <Project>{F94727E4-F421-45FB-B6A2-6C1CFB7A65C4}</Project>
       <Name>Ziewaar.Web.UploaderServerSupport</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

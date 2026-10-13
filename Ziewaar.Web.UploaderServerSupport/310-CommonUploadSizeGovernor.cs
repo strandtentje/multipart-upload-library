@@ -16,7 +16,7 @@ namespace Ziewaar.Web.UploaderServerSupport
             this.HardLimit = hardLimit;
             this.DiskSpaceLimit = diskSpaceLimit;
         }
-        private static readonly Log NoDrive = Log.Shit(
+        private static readonly Log NoDrive = Log.Oops(
             "Failed to find existing drive for {path}");
         public bool ValidateContentLength(string directory, long contentLength)
         {

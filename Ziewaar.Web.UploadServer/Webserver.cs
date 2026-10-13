@@ -12,7 +12,7 @@ namespace Ziewaar.Web.UploadServer
         private static readonly Log
             StartServer = Log.Cool("Server start"),
             RequestRecv = Log.Info("Request receive {method} {route}"),
-            MissingAsyncResult = Log.Shit("Missing async result"),
+            MissingAsyncResult = Log.Oops("Missing async result"),
             FailedGetCtx = Log.Fail("Failed to get context {dueto}"),
             FailedNewCtx = Log.Fail("Failed to start getting new ctx {dueto}"),
             NoEventHandler = Log.Fail("No event handler configured for request"),

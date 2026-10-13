@@ -78,12 +78,12 @@ namespace Ziewaar.Web.UploaderServerSupport
         /// <returns>True if some sequence tree was matched, false otherwise.</returns>
         public bool IndexOf(
             ByteSequenceNode optionTree,
-            long startAt,
+            long initiallyStartAt,
             out long resultStartAt,
             out long resultEndAt,
             out ByteSequenceNodeTag tag)
         {
-            for (; startAt < this.WindowEnd; startAt++)
+            for (var startAt = initiallyStartAt; startAt < this.WindowEnd; startAt++)
             {
                 resultStartAt = this.IndexOf(optionTree.Sequence, startAt);
                 if (resultStartAt < 0)
@@ -154,21 +154,25 @@ namespace Ziewaar.Web.UploaderServerSupport
         /// <returns>Position absolute to start of Inspection buffer at which 
         /// the sequence first occured, or some value lower than 0 if 
         /// it did not occur.</returns>
-        public long IndexOf(byte[] sequence, long startAt)
+        public long IndexOf(byte[] sequence, long initiallyStartAt)
         {
             if (sequence.Length == 0)
                 throw new ArgumentOutOfRangeException("cannot find empty thing");
-            else if (startAt < 0)
-                throw new ArgumentOutOfRangeException("startAt must be positive");
+            else if (initiallyStartAt < WindowOffset)
+                throw new ArgumentOutOfRangeException("startAt below window offset");
+            else if (initiallyStartAt >= WindowEnd)
+                throw new ArgumentOutOfRangeException("startAt above window");
 
-            for (; startAt < WindowEnd; startAt++)
+            for (var startAt = initiallyStartAt; startAt < WindowEnd; startAt++)
             {
-                var matchingPosition = this.IndexOf(sequence[0], startAt);
-                if (matchingPosition < 0)
+                var firstCharacterMatchStartsAt = this.IndexOf(sequence[0], startAt);
+                if (firstCharacterMatchStartsAt < 0)
                     return -1;
 
-                if (this.StartsWith(sequence, startAt))
-                    return matchingPosition;
+                if (this.StartsWith(sequence, firstCharacterMatchStartsAt))
+                    return firstCharacterMatchStartsAt;
+
+                startAt = firstCharacterMatchStartsAt;
             }
             return -1;
         }
@@ -283,16 +287,18 @@ namespace Ziewaar.Web.UploaderServerSupport
             var virtualStart = (int)(startAt - WindowOffset);
             if (virtualStart < 0)
                 throw new ArgumentOutOfRangeException(
-                    "this part of the inspection window is out of view");
-            if (virtualStart < Window.Count)
-            {
-                var result = Array.IndexOf(
-                    Window.Allocation, b, virtualStart, 
-                    Window.Count - virtualStart);
-                if (result >= virtualStart)
-                    return WindowOffset + result;
-            }
-            return -1;
+                    "this part of the inspection window has passed");
+            if (virtualStart >= Window.Count)
+                throw new ArgumentOutOfRangeException(
+                    "this part of the inspection window han't yet come");
+
+            var result = Array.IndexOf(
+                Window.Allocation, b, virtualStart,
+                Window.Count - virtualStart);
+            if (result < 0)
+                return -1;
+
+            return WindowOffset + result;
         }
 
         /// <summary>
@@ -352,7 +358,7 @@ namespace Ziewaar.Web.UploaderServerSupport
                 // Window already), and it cannot exceed Peek size minus
                 // contd. seek position;
                 sbl.Append(Encoding.ASCII.GetString(
-                    this.Peek.Allocation, 
+                    this.Peek.Allocation,
                     (int)virtualPosition,
                     (int)availableCount));
             }

@@ -30,6 +30,7 @@ namespace Ziewaar.Web.UploaderServerSupport
                 this.Receiving, this.Processing,
                 this.Inspector, this.Ingestor);
             this.WorkerThread = new Thread(this.Worker.ParserLoop);
+            this.WorkerThread.Priority = ThreadPriority.BelowNormal;            
             this.WorkerThread.Start(null);
         }
 

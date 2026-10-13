@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Ejije.Logging;
 using System.IO;
+using Ziewaar.TtLog.Utilities;
 
 namespace Ziewaar.Web.UploaderServerSupport
 {
